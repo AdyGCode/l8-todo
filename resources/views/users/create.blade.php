@@ -103,6 +103,30 @@
                             @enderror
                         </div>
 
+                        <div class="w-full py-3">
+                            <label class="text-gray-600 w-full"
+                                   for="roles">
+                                Roles
+                            </label>
+
+                            <select
+                                   name="roles" id="roles"
+                                   placeholder="Select Role(s)"
+                                   class="@error('roles') border-red-500 @enderror
+                                       border-gray-300 w-full"
+                            multiple
+                            aria-multiselectable="true">
+                                @foreach($roles as $role)
+                                    <option value="{{$role}}">{{$role}}</option>
+                                @endforeach
+                            </select>
+                            @error('roles')
+                            <small class="text-red-500 my-2 pt-2">
+                                {{ $message }}
+                            </small>
+                            @enderror
+                        </div>
+
                         <div class="py-6">
                             <button class="rounded p-2 px-4 mr-4
                                            border border-green-600 text-green-800

@@ -2,7 +2,7 @@
 /**
  * Filename:    show.blade.php
  * Project:     SaaS-CUBE
- * Location:    resources\views\admin\users
+ * Location:    resources\views\admin\tasks
  * Author:      Adrian Gould <adrian.gould@nmtafe.wa.edu.au>
  * Created:     08/09/21
  * Description:
@@ -13,7 +13,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('User Details') }}
+            {{ __('Task Details') }}
         </h2>
     </x-slot>
 
@@ -24,30 +24,24 @@
 
                     <dl class="grid grid-cols-6 gap-2">
                         <dt class="col-span-1">ID</dt>
-                        <dd class="col-span-5">{{ $user->id }}</dd>
+                        <dd class="col-span-5">{{ $task->id }}</dd>
                         <dt class="col-span-1">Name</dt>
-                        <dd class="col-span-5">{{ $user->name }}</dd>
+                        <dd class="col-span-5">{{ $task->name }}</dd>
+                        <dt class="col-span-1">Details</dt>
+                        <dd class="col-span-5">{{ $task->description }}</dd>
+                        <dt class="col-span-1">Status</dt>
+                        <dd class="col-span-5">{{ $task->status ?? '-' }}</dd>
                         <dt class="col-span-1">Added</dt>
-                        <dd class="col-span-5">@displayDate($user->created_at)</dd>
-                        <dt class="col-span-1">Last Logged In</dt>
-                        <dd class="col-span-5">
-                            @if(is_null($user->last_login_at))
-                                -
-                            @else
-                                @displayDate($user->last_login_at)
-                            @endif
-                        </dd>
-                        <dt class="col-span-1">Last Logged In From</dt>
-                        <dd class="col-span-5">{{ $user->last_login_ip ?? '-' }}</dd>
+                        <dd class="col-span-5">@displayDate($task->created_at)</dd>
                         <dt class="col-span-1">Actions</dt>
                         <dd class="col-span-5">
                             <form
-                                action="{{ route('users.destroy',['user'=>$user]) }}"
+                                action="{{ route('tasks.destroy',['task'=>$task]) }}"
                                 method="post">
                                 @csrf
                                 @method('delete')
 
-                                <a href="{{ route('users.edit', ['user'=>$user]) }}"
+                                <a href="{{ route('tasks.edit', ['task'=>$task]) }}"
                                    class="rounded p-2 px-4 mr-4
                                            border border-green-600 text-green-800
                                            hover:bg-green-600 hover:text-white
@@ -66,11 +60,11 @@
                         </dd>
                     </dl>
                     <p class="pt-6">
-                        <a href="{{ url('/users') }}"
+                        <a href="{{ url('/tasks') }}"
                            class="rounded p-2 px-4 mr-2
                                   border border-blue-600 text-blue-800 bg-white
                                   hover:bg-blue-500 hover:text-white hover:border-blue-800
-                                  transition-all ease-in-out duration-200">Back to Users</a>
+                                  transition-all ease-in-out duration-200">Back to Tasks</a>
                     </p>
                 </div>
             </div>

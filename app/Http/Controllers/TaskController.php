@@ -56,7 +56,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
+        return view('tasks.show',compact('task'));
     }
 
     /**
@@ -83,13 +83,9 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        if (isset($_POST['delete'])) {
-            $task->delete();
-            return redirect(route('tasks.index'));
-        } else {
             $this->validate($request, [
                 'description' => ['required',],
-                'name' => ['required', 'min:5']
+                'name' => ['required', 'min:5',]
             ]);
 
             $task->name = $request->name;
@@ -97,7 +93,6 @@ class TaskController extends Controller
             $task->save();
 
             return redirect(route('tasks.index'));
-        }
     }
 
     /**

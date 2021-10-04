@@ -22,7 +22,17 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200 ">
-
+                    @if ($message = Session::get('success'))
+                        <div class="border-green-900 border-2 border-solid bg-green-800
+                                        text-white px-2 my-2 py-1 rounded">
+                            <p class="flex-1">
+                                <i class="fas fa-smile mr-6 pl-2"></i>
+                                <span class="align-middle">
+                                        {{ $message }}
+                                    </span>
+                            </p>
+                        </div>
+                    @endif
                     <div class="overflow-x-auto ">
                         <table
                             class="table w-full border border-0 border-bottom border-gray-300">

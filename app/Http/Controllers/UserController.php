@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -28,7 +29,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('users.create');
+        $roles = Role::pluck('name', 'name')->all();
+        return view('users.create', compact(['roles',]));
     }
 
     /**
@@ -48,7 +50,8 @@ class UserController extends Controller
                     'email',
                     'max:255',
                     'unique:users',
-                    'email:rfc,dns'
+                    'email:rfc'
+//                    'email:rfc,dns'
                 ],
                 'password' => [
                     'confirmed',
@@ -57,13 +60,17 @@ class UserController extends Controller
                         ->letters()
                         ->mixedCase()
                         ->numbers()
-                        ->symbols()
-                        ->uncompromised(),
+//                        ->symbols()
+//                        ->uncompromised()
+                    ,
+                ],
+                'roles' => [
+                    'required',
                 ],
             ]
         );
 
-        User::create(
+        $user = User::create(
             [
                 'name' => $request->name,
                 'email' => $request->email,
@@ -71,7 +78,10 @@ class UserController extends Controller
             ]
         );
 
-        return redirect(route('users.index'));
+        $user->assignRole($request->input('roles'));
+
+        return redirect()->route('users.index')
+            ->with('success', 'User created successfully');
     }
 
     /**
@@ -93,7 +103,10 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        return view('users.edit', compact('user'));
+        $roles = Role::pluck('name', 'name')->all();
+        $userRole = $user->roles->pluck('name', 'name')->all();
+
+        return view('users.edit', compact('user', 'roles', 'userRole'));
     }
 
     /**
@@ -118,21 +131,25 @@ class UserController extends Controller
                     'email',
                     'max:255',
                     'email:rfc',
-                    //'email:rfc,dns',
+                    //'email:rfc,dns', // also check for valid smtp response
                     Rule::unique('users')->ignore($user),
                 ],
                 'password' =>
-                    (isset($request->password) && !is_null($request->password) ? [
+                    (isset($request->password) && !is_null($request->password) ?
+                        [
                         'sometimes',
                         'confirmed',
                         'required',
                         Password::min(4)
                             ->letters()
                             ->mixedCase()
-                            ->numbers()
-                            ->symbols()
-                            ->uncompromised(),
+                            //->numbers()
+                            //->symbols()
+                            //->uncompromised(),
                     ] : [null]),
+                'roles' => [
+                    'required',
+                ],
             ]
         );
 
@@ -149,8 +166,11 @@ class UserController extends Controller
         }
 
         $user->save();
+        DB::table('model_has_roles')->where('model_id',$user->id)->delete();
+        $user->assignRole($request->input('roles'));
 
-        return redirect(route('users.index'));
+        return redirect()->route('users.index')
+            ->with('success','User updated successfully');
     }
 
     /**
@@ -173,6 +193,6 @@ class UserController extends Controller
     public function destroy(User $user)
     {
         $user->delete();
-        return redirect(route('users.index'));
-    }
+        return redirect()->route('users.index')
+            ->with('success','User deleted successfully');    }
 }

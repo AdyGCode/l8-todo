@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class UserSeeder extends Seeder
 {
@@ -17,7 +19,7 @@ class UserSeeder extends Seeder
     {
 // CTRL + ALT + L Reformat code
         // CTRL + D Duplicate line / selection
-        $seedUsers = [
+        $seedAdminUser =
             [
                 'id' => 1,
                 'name' => 'Ad Ministrator',
@@ -26,7 +28,15 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('Password1'),
                 'created_at' => now(),
                 'timezone' => 'Australia/Perth',
-            ],
+            ];
+
+
+        $user = User::create($seedAdminUser);
+        $role = Role::findByName('Admin');
+        $user->assignRole([$role->id]);
+
+
+        $seedManagerUsers = [
             [
                 'id' => 5,
                 'name' => 'YOUR NAME',
@@ -45,6 +55,15 @@ class UserSeeder extends Seeder
                 'created_at' => now(),
                 'timezone' => 'Australia/Perth',
             ],
+            ];
+
+        $role = Role::findByName('Manager');
+        foreach ($seedManagerUsers as $managerUser){
+            $user = User::create($managerUser);
+            $user->assignRole([$role->id]);
+        }
+
+        $seedUsers = [
             [
                 'id' => 10,
                 'name' => 'Eileen Dover',
